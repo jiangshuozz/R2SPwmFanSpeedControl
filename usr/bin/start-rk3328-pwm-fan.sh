@@ -1,8 +1,10 @@
 #!/bin/bash
 # /etc/init.d/fa-rk3328-pwmfan
+
 PWM_PERIOD=100000000 # affect the resolution of PWM
-ENTER_SLEEP_TIME=5s
-EXIT_SLEEP_TIME=120s
+ENTER_SLEEP_TIME=5s # 进入检测周期，每5秒检测一次，连续检测满足条件次数达到阈值则启动风扇
+EXIT_SLEEP_TIME=120s # 退出检测周期，即风扇启动后，本脚本睡眠定时，定时到后重新进行温度检测，低于预期温度，则关闭风扇。
+PeakFilterThld=10 # 进入检测阈值，如果进入检测周期是5s，阈值是10s，那么要连续10次温度超过预期温度才会启动风扇。
 
 if [ ! -d /sys/class/pwm/pwmchip0 ]; then
     echo "this model does not support pwm."
@@ -36,18 +38,15 @@ echo CpuTemps: ${CpuTemps[*]}
 echo Percents: ${Percents[*]}
 echo Len: $CpuTempsLen
 
-DefaultDuty=$PWM_PERIOD
 DefaultPercents=0
-PeakFilterThld=10
 PeakCnt=0
 SleepTime=$ENTER_SLEEP_TIME
-
 while true
 do
 	temp=$(cat /sys/class/thermal/thermal_zone0/temp)
 	INDEX=0
 	FOUNDTEMP=0
-	DUTY=$DefaultDuty
+	DUTY=$PWM_PERIOD
 	PERCENT=$DefaultPercents
 
 	for i in $(seq 0 $CpuTempsLen); do
