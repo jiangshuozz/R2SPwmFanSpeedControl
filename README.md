@@ -25,10 +25,10 @@ chmod +x /etc/init.d/fa-rk3328-pwmfan
 
 ### 2 自动化脚本部署
 
-#### 2.1 git clone 此项目
+#### 2.1 git clone 此项目[$REPOSITY](https://github.com/jiangshuozz/R2SPwmFanSpeedControl.git)
 
-  git clone [$REPOSITY](https://github.com/jiangshuozz/R2SPwmFanSpeedControl.git) R2SPwmFanSpeedControl
-  
+git clone https://github.com/jiangshuozz/R2SPwmFanSpeedControl.git R2SPwmFanSpeedControl
+
 #### 2.2 进入到clone的文件夹，执行 sh ./one-key-deploy.sh 一键部署
 
 cd ./R2SPwmFanSpeedControl
