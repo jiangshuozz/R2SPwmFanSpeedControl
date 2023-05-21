@@ -4,6 +4,7 @@ R2S Fan口接风扇 温控调速脚本 for OpenWrt
 ### R2S 外接风扇温控调速
 
 1 手动操作：
+
 1.1 脚本替换路径
 
 /etc/init.d/fa-rk3328-pwmfan
