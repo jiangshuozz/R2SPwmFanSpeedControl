@@ -5,10 +5,10 @@ START=96
 start() {
 	echo "fa-pwmfan started"
 	if test -z $(pgrep -f pwm-fan); then
-	    echo 'old pid: NULL'
-  else
-      echo 'old pid: '$(pgrep -f pwm-fan)
-      kill $(pgrep -f pwm-fan)
+		echo 'old pid: NULL'
+	else
+      		echo 'old pid: '$(pgrep -f pwm-fan)
+      		kill $(pgrep -f pwm-fan)
 	fi
 	/usr/bin/start-rk3328-pwm-fan.sh > /dev/null&
 	echo 'new pid: '$(pgrep -f pwm-fan) 
