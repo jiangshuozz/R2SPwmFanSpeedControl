@@ -49,31 +49,30 @@ do
 	FOUNDTEMP=0
 	DUTY=$DefaultDuty
 	PERCENT=$DefaultPercents
-	
+
 	for i in $(seq 0 $CpuTempsLen); do
 		if [ $temp -gt ${CpuTemps[$i]} ]; then
 			INDEX=$i
-      PeakCnt=$((${PeakCnt}+1))
-      FOUNDTEMP=1
+			PeakCnt=$((${PeakCnt}+1))
+			FOUNDTEMP=1
 			break
 		fi	
 	done
-  if [ ${FOUNDTEMP} == 0 ]; then
-    PeakCnt=0
-    SleepTime=$ENTER_SLEEP_TIME
+	if [ ${FOUNDTEMP} == 0 ]; then
+		PeakCnt=0
+		SleepTime=$ENTER_SLEEP_TIME
 	fi
-  echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}"
-  if [ ${PeakCnt} -gt ${PeakFilterThld} ]; then
+	echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}"
+	if [ ${PeakCnt} -gt ${PeakFilterThld} ]; then
 		PERCENT=${Percents[$i]}
-    DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100] # DUTY=${PwmDutyCycles[$i]}
-    PeakCnt=$((${PeakCnt}-1))
-    SleepTime=$EXIT_SLEEP_TIME
+		DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100] # DUTY=${PwmDutyCycles[$i]}
+		PeakCnt=$((${PeakCnt}-1))
+		SleepTime=$EXIT_SLEEP_TIME
 	fi
-  echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}, SleepTime: $SleepTime"
+	echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}, SleepTime: $SleepTime"
 	echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle;
-
-  echo "temp: $temp, duty: $DUTY, ${PERCENT}%"
-  # cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
+	echo "temp: $temp, duty: $DUTY, ${PERCENT}%"
+	# cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
 
 	sleep $SleepTime;
 done
