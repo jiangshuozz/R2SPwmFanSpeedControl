@@ -29,6 +29,8 @@ chmod +x /etc/init.d/fa-rk3328-pwmfan
 
 git clone https://github.com/jiangshuozz/R2SPwmFanSpeedControl.git R2SPwmFanSpeedControl
 
+(如果没有git可以先执行: opkg update & install git 进行git安装)
+
 #### 2.2 进入到clone的文件夹，执行 sh ./one-key-deploy.sh 一键部署
 
 cd ./R2SPwmFanSpeedControl
