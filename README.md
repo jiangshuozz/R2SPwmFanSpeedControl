@@ -42,3 +42,5 @@ sh ./one-key-deploy.sh
 加CPU负载命令：cat /dev/urandom| gzip -9| gzip -d > /dev/null &
 
 杀死测试进程命令：kill $(pgrep -f gzip)
+
+温控状态查询命令：/root/pwm-fan-status.sh
