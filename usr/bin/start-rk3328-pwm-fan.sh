@@ -1,10 +1,17 @@
 #!/bin/bash
 # /etc/init.d/fa-rk3328-pwmfan
 
-PWM_PERIOD=100000000 # affect the resolution of PWM
-ENTER_SLEEP_TIME=5s # 进入检测周期，每5秒检测一次，连续检测满足条件次数达到阈值则启动风扇
-EXIT_SLEEP_TIME=120s # 退出检测周期，即风扇启动后，本脚本睡眠定时，定时到后重新进行温度检测，低于预期温度，则关闭风扇。
-PeakFilterThld=10 # 进入检测阈值，如果进入检测周期是5s，阈值是10s，那么要连续10次温度超过预期温度才会启动风扇。
+PWM_PERIOD=100000000 # affect the resolution of PWM, too small to control the fan speed
+ENTER_SLEEP_TIME=5s # enter detection period
+EXIT_SLEEP_TIME=120s # exit detection period
+PeakFilterThld=10 # enter detection threshold, met conditions consectively will start the fan.
+
+declare -a CpuTemps=(75000 63000 58000 54000 52000 42000) # cpu temperature thresholds array
+declare -a Percents=(100 95 85 75 65 55) # fan speed array respect to the cpu temperature thresholds array, one to one
+CpuTempsLen=$[${#CpuTemps[@]}-1]
+echo CpuTemps: ${CpuTemps[*]}
+echo Percents: ${Percents[*]}
+echo Len: $CpuTempsLen
 
 if [ ! -d /sys/class/pwm/pwmchip0 ]; then
     echo "this model does not support pwm."
@@ -31,14 +38,6 @@ echo -n 0 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 sleep 5
 echo -n $PWM_PERIOD > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 
-declare -a CpuTemps=(75000 63000 58000 54000 52000 42000)
-declare -a Percents=(100 95 85 75 65 55)
-CpuTempsLen=$[${#CpuTemps[@]}-1]
-echo CpuTemps: ${CpuTemps[*]}
-echo Percents: ${Percents[*]}
-echo Len: $CpuTempsLen
-
-DefaultPercents=0
 PeakCnt=0
 SleepTime=$ENTER_SLEEP_TIME
 while true
@@ -47,7 +46,7 @@ do
 	INDEX=0
 	FOUNDTEMP=0
 	DUTY=$PWM_PERIOD
-	PERCENT=$DefaultPercents
+	PERCENT=0
 
 	for i in $(seq 0 $CpuTempsLen); do
 		if [ $temp -gt ${CpuTemps[$i]} ]; then
@@ -64,7 +63,7 @@ do
 	echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}"
 	if [ ${PeakCnt} -gt ${PeakFilterThld} ]; then
 		PERCENT=${Percents[$i]}
-		DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100] # DUTY=${PwmDutyCycles[$i]}
+		DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100]
 		PeakCnt=$((${PeakCnt}-1))
 		SleepTime=$EXIT_SLEEP_TIME
 	fi
