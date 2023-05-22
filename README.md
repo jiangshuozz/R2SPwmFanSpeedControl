@@ -36,3 +36,9 @@ unzip R2SPwmFanSpeedControl
 cd ./R2SPwmFanSpeedControl-main
 
 sh ./one-key-deploy.sh
+
+### 3 构造测试场景
+
+加CPU负载命令：cat /dev/urandom| gzip -9| gzip -d > /dev/null &
+
+杀死测试进程命令：kill $(pgrep -f gzip)
