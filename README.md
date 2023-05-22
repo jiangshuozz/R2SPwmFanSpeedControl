@@ -37,7 +37,7 @@ cd ./R2SPwmFanSpeedControl-main
 
 sh ./one-key-deploy.sh
 
-### 3 构造测试场景
+### 3 构造测试场景(有兴趣可选)
 
 加CPU负载命令：cat /dev/urandom| gzip -9| gzip -d > /dev/null &
 
