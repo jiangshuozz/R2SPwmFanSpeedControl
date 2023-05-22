@@ -7,7 +7,7 @@ EXIT_SLEEP_TIME=120s # exit detection period
 PeakFilterThld=10 # enter detection threshold, met conditions consectively will start the fan.
 
 declare -a CpuTemps=(75000 63000 58000 54000 52000 42000) # cpu temperature thresholds array
-declare -a Percents=(100 95 85 75 65 55) # fan speed array respect to the cpu temperature thresholds array, one to one
+declare -a Percents=(100 95 85 75 65 55) # fan speed array respect to the cpu temperature thresholds array, one to one, 100 means the max speed
 CpuTempsLen=$[${#CpuTemps[@]}-1]
 echo CpuTemps: ${CpuTemps[*]}
 echo Percents: ${Percents[*]}
@@ -42,35 +42,35 @@ PeakCnt=0
 SleepTime=$ENTER_SLEEP_TIME
 while true
 do
-	temp=$(cat /sys/class/thermal/thermal_zone0/temp)
-	INDEX=0
-	FOUNDTEMP=0
-	DUTY=$PWM_PERIOD
-	PERCENT=0
+    temp=$(cat /sys/class/thermal/thermal_zone0/temp)
+    INDEX=0
+    FOUNDTEMP=0
+    DUTY=$PWM_PERIOD
+    PERCENT=0
 
-	for i in $(seq 0 $CpuTempsLen); do
-		if [ $temp -gt ${CpuTemps[$i]} ]; then
-			INDEX=$i
-			PeakCnt=$((${PeakCnt}+1))
-			FOUNDTEMP=1
-			break
-		fi	
-	done
-	if [ ${FOUNDTEMP} == 0 ]; then
-		PeakCnt=0
-		SleepTime=$ENTER_SLEEP_TIME
-	fi
-	echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}"
-	if [ ${PeakCnt} -gt ${PeakFilterThld} ]; then
-		PERCENT=${Percents[$i]}
-		DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100]
-		PeakCnt=$((${PeakCnt}-1))
-		SleepTime=$EXIT_SLEEP_TIME
-	fi
-	echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}, SleepTime: $SleepTime"
-	echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle;
-	echo "temp: $temp, duty: $DUTY, ${PERCENT}%"
-	# cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
+    for i in $(seq 0 $CpuTempsLen); do
+        if [ $temp -gt ${CpuTemps[$i]} ]; then
+            INDEX=$i
+            PeakCnt=$((${PeakCnt}+1))
+            FOUNDTEMP=1
+            break
+        fi    
+    done
+    if [ ${FOUNDTEMP} == 0 ]; then
+        PeakCnt=0
+        SleepTime=$ENTER_SLEEP_TIME
+    fi
+    echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}"
+    if [ ${PeakCnt} -gt ${PeakFilterThld} ]; then
+        PERCENT=${Percents[$i]}
+        DUTY=$[${PWM_PERIOD}*$[100-${PERCENT}]/100]
+        PeakCnt=$((${PeakCnt}-1))
+        SleepTime=$EXIT_SLEEP_TIME
+    fi
+    echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}, SleepTime: $SleepTime"
+    echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle;
+    echo "temp: $temp, duty: $DUTY, ${PERCENT}%"
+    # cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
 
-	sleep $SleepTime;
+    sleep $SleepTime;
 done
