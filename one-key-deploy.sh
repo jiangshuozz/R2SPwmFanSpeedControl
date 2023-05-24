@@ -12,4 +12,4 @@ chmod +x /root/pwm-fan-status.sh
 /etc/init.d/fa-rk3328-pwmfan enable
 /etc/init.d/fa-rk3328-pwmfan start
 sleep 10s
-./pwm-fan-status.sh
+/root/pwm-fan-status.sh
