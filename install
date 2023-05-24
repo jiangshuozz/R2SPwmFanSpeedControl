@@ -6,7 +6,7 @@ if [ $? != 0 ];then
     exit $?
 fi
 unzip R2SPwmFanSpeedControl
-push .
+pushd .
 cd ./R2SPwmFanSpeedControl-main
 sh ./one-key-deploy.sh
 
