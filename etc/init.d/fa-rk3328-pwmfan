@@ -17,4 +17,5 @@ start() {
 stop() {
 	echo 'fa-pwmfan stopped: '$(pgrep -f pwm-fan)
 	kill $(pgrep -f pwm-fan)
+	/usr/bin/start-rk3328-pwm-fan.sh never > /dev/null&
 }
