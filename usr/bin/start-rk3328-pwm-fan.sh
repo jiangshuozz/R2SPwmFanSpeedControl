@@ -13,6 +13,12 @@ echo CpuTemps: ${CpuTemps[*]}
 echo Percents: ${Percents[*]}
 echo Len: $CpuTempsLen
 
+# judge the enter para to stop the fan
+if [ "$1" == "never" ]; then
+    echo -n $(cat /sys/class/pwm/pwmchip0/pwm0/period) > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+    exit 0
+fi
+
 if [ ! -d /sys/class/pwm/pwmchip0 ]; then
     echo "this model does not support pwm."
     exit 1
@@ -68,9 +74,9 @@ do
         SleepTime=$EXIT_SLEEP_TIME
     fi
     echo "PeakFilterThld: $PeakFilterThld, PeakCnt: ${PeakCnt}, SleepTime: $SleepTime"
-    echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle;
+    echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
     echo "temp: $temp, duty: $DUTY, ${PERCENT}%"
     # cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
 
-    sleep $SleepTime;
+    sleep $SleepTime
 done
