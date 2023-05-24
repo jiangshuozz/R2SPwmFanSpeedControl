@@ -6,11 +6,11 @@ if [ $? != 0 ];then
     exit $?
 fi
 unzip R2SPwmFanSpeedControl
-pushd .
+pushd . > /dev/null
 cd ./R2SPwmFanSpeedControl-main
 sh ./one-key-deploy.sh
 
 # clean env
 rm -rf R2SPwmFanSpeedControl
 rm -rf ./R2SPwmFanSpeedControl-main
-popd
+popd > /dev/null
