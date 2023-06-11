@@ -9,8 +9,8 @@ unzip R2SPwmFanSpeedControl
 pushd . > /dev/null
 cd ./R2SPwmFanSpeedControl-main
 sh ./one-key-deploy.sh
+popd > /dev/null
 
 # clean env
 rm -rf R2SPwmFanSpeedControl
 rm -rf ./R2SPwmFanSpeedControl-main
-popd > /dev/null
